@@ -201,6 +201,6 @@ def UI():
         for ch in chapters:
             ch.buildHTML(path)
 
-        print(f"All {len(chapters)} chapters were built downloaded and built succesfully. Enjoy!\n")
+        print(f"All {len(chapters)} chapters were downloaded and built succesfully. Enjoy!\n")
 
 UI()
