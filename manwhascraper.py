@@ -63,8 +63,8 @@ class Chapter:
             '</head>',
             '<body class="main">',
             '<div class="menu">',
-            '<button class="nav" onclick="loadPrevChapter()">Prev</button>' if self.nextChapter is not None else "",
-            '<button class="nav" onclick="loadNextChapter()">Next</button>' if self.previousChapter is not None else "",
+            '<button class="nav" onclick="loadPrevChapter()">Prev</button>' if self.previousChapter is not None else "",
+            '<button class="nav" onclick="loadNextChapter()">Next</button>' if self.nextChapter is not None else "",
             '</div>',
             '<div class="readerarea">'
         ]
@@ -80,7 +80,7 @@ class Chapter:
         end = [
             '</div>',
             '<div class="menu">',
-            '<button class="nav" onclick="loadPrevChapter()">Prev</button>' if self.nextChapter is not None else "",
+            '<button class="nav" onclick="loadPrevChapter()">Prev</button>' if self.previousChapter is not None else "",
             '<button class="nav" onclick="loadNextChapter()">Next</button>' if self.nextChapter is not None else "",
             '</div>',
             '</body>',
@@ -121,7 +121,6 @@ def downloadImage(url, path: str):
 
 def getNextURL(html):
     for id in re.finditer(r'"nextUrl":"([^"]*)"', html):
-        print(normalizeURL(id.group(1)))
         return normalizeURL(id.group(1))
     return None
 
@@ -202,13 +201,6 @@ def UI():
         for ch in chapters:
             ch.buildHTML(path)
 
-        print(f"All {len(chapters)} were built downloaded and built succesfully. Enjoy!\n")
-
-
-
-main_dir = "C:/Users/lexbr/OneDrive/Desktop/manwhas/"
-
-URL = "https://asura.gg/2226495089-i-grow-stronger-by-eating-chapter-50/"
-
+        print(f"All {len(chapters)} chapters were built downloaded and built succesfully. Enjoy!\n")
 
 UI()
