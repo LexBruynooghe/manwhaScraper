@@ -53,7 +53,7 @@ class Chapter:
             '<head>',
             '    <meta charset="UTF-8">',
             f'    <title>{self.title + " - " + str(self.chapter)}</title>',
-            '<style>.readerarea{text-align: center;padding: 10px;}.main{background:#1e1f22;}.menu{background: #3f3f3f;padding: 5px 50px 5px 50px;text-align: right;}  .nav {border-radius: 10px; border: 0;background-color: #c7a669;padding: 5px 10px 5px 10px; margin-left: 10px; font-family: "Helvetica Neue", arial, sans-serif; font-size: 18px; color: #886464;}.nav:hover {background-color: #b78730;cursor: pointer;}</style>',
+            '<style>.readerarea{text-align: center;padding: 10px;}.main{background:#1e1f22;}.menu{background: #3f3f3f;padding: 5px 50px 5px 50px;text-align: right;}  .nav {border-radius: 10px; border: 0;background-color: #c7a669;padding: 5px 10px 5px 10px; margin-left: 10px; font-family: "Helvetica Neue", arial, sans-serif; font-size: 18px; color: #ffffff;}.nav:hover {background-color: #b78730;cursor: pointer;}</style>',
             '<script type="text/javascript">',
             "function loadNextChapter() {window.location.href = '../Chapter_" + str(
                 self.nextChapter) + "/read.html'}" if self.nextChapter is not None else "",
@@ -75,7 +75,7 @@ class Chapter:
             img_path = os.path.join(chapter_dir, f"{name}.jpg")
             downloadImage(self.content[i].url, img_path)
             start.append(
-                f'<p><img decoding="async" loading="lazy" src="{name}.jpg" width="{self.content[i].width}" height="{self.content[i].height}" class="readcontent"><p>')
+                f'<p><img decoding="async" loading="lazy" src="{name}.jpg" width="{self.content[i].width}" height="{self.content[i].height}" class="readcontent"></p>')
 
         end = [
             '</div>',
