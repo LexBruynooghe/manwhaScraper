@@ -44,7 +44,6 @@ class Chapter:
             shutil.rmtree(chapter_dir)
             os.mkdir(chapter_dir)
 
-        print(f"building chapter ")
         f = open(chapter_html, 'w')
 
         start = [
