@@ -5,6 +5,7 @@ import shutil
 from tkinter.filedialog import askdirectory
 from bs4 import BeautifulSoup
 
+DEBUGGING = False
 
 class ContentImage:
     def __init__(self, url: str, width: int, height: int):
@@ -52,7 +53,7 @@ class Chapter:
             '<head>',
             '    <meta charset="UTF-8">',
             f'    <title>{self.title + " - " + str(self.chapter)}</title>',
-            '<style>.readerarea{text-align: center;padding: 10px;}.main{background:#1e1f22;}.menu{background: #3f3f3f;padding: 5px 50px 5px 50px;text-align: right;}  .nav {border-radius: 10px; border: 0;background-color: #c7a669;padding: 5px 10px 5px 10px; margin-left: 10px; font-family: "Helvetica Neue", arial, sans-serif; font-size: 18px; color: #ffffff;}.nav:hover {background-color: #b78730;cursor: pointer;}</style>',
+            '<style>.readerarea{text-align: center;}.main{background:#1e1f22;}.menu{background: #4d4a4a;padding: 5px 50px 5px 50px;text-align: right;}  .nav {border-radius: 10px; border: 0;background-color: #c7a669;padding: 5px 10px 5px 10px; margin-left: 10px; font-family: "Helvetica Neue", arial, sans-serif; font-size: 18px; color: #ffffff;}  .nav:hover {background-color: #b78730;cursor: pointer;}</style>',
             '<script type="text/javascript">',
             "function loadNextChapter() {window.location.href = '../Chapter_" + str(
                 self.nextChapter) + "/read.html'}" if self.nextChapter is not None else "",
@@ -62,8 +63,8 @@ class Chapter:
             '</head>',
             '<body class="main">',
             '<div class="menu">',
-            '<button class="nav" onclick="loadPrevChapter()">Prev</button>' if self.previousChapter is not None else "",
-            '<button class="nav" onclick="loadNextChapter()">Next</button>' if self.nextChapter is not None else "",
+            '<button class="nav" onclick="loadPrevChapter()">< Prev</button>' if self.previousChapter is not None else "",
+            '<button class="nav" onclick="loadNextChapter()">Next ></button>' if self.nextChapter is not None else "",
             '</div>',
             '<div class="readerarea">'
         ]
@@ -79,8 +80,8 @@ class Chapter:
         end = [
             '</div>',
             '<div class="menu">',
-            '<button class="nav" onclick="loadPrevChapter()">Prev</button>' if self.previousChapter is not None else "",
-            '<button class="nav" onclick="loadNextChapter()">Next</button>' if self.nextChapter is not None else "",
+            '<button class="nav" onclick="loadPrevChapter()">< Prev</button>' if self.previousChapter is not None else "",
+            '<button class="nav" onclick="loadNextChapter()">Next ></button>' if self.nextChapter is not None else "",
             '</div>',
             '</body>',
             '</html>'
@@ -141,6 +142,8 @@ def makeChapter(page):
 
     chapter = Chapter(title, chapterNr)
 
+    print(f"Loading: '{title} - {chapterNr}'...")
+
     images = getContentImages(soup)
     for img in images:
         chapter.addContentImage(img)
@@ -149,19 +152,28 @@ def makeChapter(page):
 
     next_url = getNextURL(html)
     try:
-        nextChapter = re.finditer(r"chapter-([0-9.]*)[-/]*", next_url).__next__().group(1)
+        nextChapter = re.finditer(r"chapter-([0-9.]+)[-/]*", next_url).__next__().group(1)
+        if DEBUGGING:
+            print(f"next chapter found at {next_url}")
+            print(f"next chapterNr is {nextChapter}")
     except:
-        nextChapter = None
+        if DEBUGGING:
+            print("no next chapter detected")
 
     prev_url = getPrevURL(html)
     try:
-        previousChapter = re.finditer(r"chapter-([0-9.]*)[-/]*", prev_url).__next__().group(1)
+        previousChapter = re.finditer(r"chapter-([0-9.]+)[-/]*", prev_url).__next__().group(1)
+        if DEBUGGING:
+            print(f"previous chapter found at {prev_url}")
+            print(f"previous chapterNr is {previousChapter}")
     except:
         previousChapter = None
+        if DEBUGGING:
+            print("no previous chapter detected")
 
-    if nextChapter is not None:
+    if nextChapter not in [None, '']:
         chapter.nextChapter = float(nextChapter)
-    if previousChapter is not None:
+    if previousChapter not in [None, '']:
         chapter.previousChapter = float(previousChapter)
 
     return chapter
@@ -203,3 +215,5 @@ def UI():
         print(f"All {len(chapters)} chapters were downloaded and built succesfully. Enjoy!\n")
 
 UI()
+
+# https://asura.gg/2226495089-solo-max-level-newbie-chapter-55/
