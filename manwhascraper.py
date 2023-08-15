@@ -186,7 +186,7 @@ def makeChapter(page):
 
 
 def UI():
-    print("Welcome to 'Unnamed Manwha Scraper v0.1' by Acheros.")
+    print("Welcome to 'Unnamed Manwha Scraper v0.2' by Acheros.")
     print("Feedback is appreciated and can be sent via discord '_acheros'.\n")
 
     while True:
