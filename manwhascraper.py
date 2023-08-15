@@ -5,7 +5,7 @@ import shutil
 from tkinter.filedialog import askdirectory
 from bs4 import BeautifulSoup
 
-DEBUGGING = True
+DEBUGGING = False
 
 class ContentImage:
     def __init__(self, url: str, width: int, height: int):
@@ -99,7 +99,8 @@ def debugPrint(msg):
 
 def getContentImages(soup: BeautifulSoup) -> [ContentImage]:
     readerarea = soup.find(id="readerarea")
-    images = readerarea.findAll("img")
+    image_containers = readerarea.findAll("p")
+    images = [container.findAll("img")[0] for container in image_containers]
     return [ContentImage(img.attrs["src"], img.attrs["width"], img.attrs["height"]) for img in images]
 
 
@@ -112,7 +113,7 @@ def getTitle(pageTitle: str):
 
 
 def getChapter(pageTitle: str):
-    for id in re.finditer(r'Chapter ([0-9.,-]+)', pageTitle):
+    for id in re.finditer(r'Chapter ([0-9.]+)', pageTitle):
         return float(id.group(1))
 
 
@@ -156,13 +157,16 @@ def makeChapter(page):
     html = page.content.decode('utf-8')
 
     next_url = getNextURL(html)
+
+    nextChapter = None
+    previousChapter = None
+
     try:
         nextChapter = re.finditer(r"chapter-([0-9.]+)[-/]*", next_url).__next__().group(1)
         debugPrint(f"next chapter found at {next_url}")
         debugPrint(f"next chapterNr is {nextChapter}")
     except:
         debugPrint("no next chapter detected")
-    debugPrint("\n")
 
     prev_url = getPrevURL(html)
     try:
@@ -172,7 +176,6 @@ def makeChapter(page):
     except:
         previousChapter = None
         debugPrint("no previous chapter detected")
-    debugPrint("\n")
 
     if nextChapter not in [None, '']:
         chapter.nextChapter = float(nextChapter)
@@ -221,4 +224,4 @@ def UI():
 
 UI()
 
-# https://asura.gg/2226495089-solo-max-level-newbie-chapter-55/
+# https://asura.nacm.xyz/2226495089-the-tutorial-is-too-hard-chapter-120/
