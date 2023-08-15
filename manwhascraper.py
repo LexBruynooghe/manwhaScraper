@@ -5,7 +5,7 @@ import shutil
 from tkinter.filedialog import askdirectory
 from bs4 import BeautifulSoup
 
-DEBUGGING = False
+DEBUGGING = True
 
 class ContentImage:
     def __init__(self, url: str, width: int, height: int):
@@ -92,6 +92,10 @@ class Chapter:
         f.close()
         print("Chapter was built succesfully!")
 
+def debugPrint(msg):
+    if DEBUGGING:
+        print(msg)
+
 
 def getContentImages(soup: BeautifulSoup) -> [ContentImage]:
     readerarea = soup.find(id="readerarea")
@@ -130,6 +134,7 @@ def getPrevURL(html):
         return normalizeURL(id.group(1))
     return None
 
+
 def normalizeURL(url):
     return re.sub(r"[\\]", "", url)
 
@@ -153,23 +158,21 @@ def makeChapter(page):
     next_url = getNextURL(html)
     try:
         nextChapter = re.finditer(r"chapter-([0-9.]+)[-/]*", next_url).__next__().group(1)
-        if DEBUGGING:
-            print(f"next chapter found at {next_url}")
-            print(f"next chapterNr is {nextChapter}")
+        debugPrint(f"next chapter found at {next_url}")
+        debugPrint(f"next chapterNr is {nextChapter}")
     except:
-        if DEBUGGING:
-            print("no next chapter detected")
+        debugPrint("no next chapter detected")
+    debugPrint("\n")
 
     prev_url = getPrevURL(html)
     try:
         previousChapter = re.finditer(r"chapter-([0-9.]+)[-/]*", prev_url).__next__().group(1)
-        if DEBUGGING:
-            print(f"previous chapter found at {prev_url}")
-            print(f"previous chapterNr is {previousChapter}")
+        debugPrint(f"previous chapter found at {prev_url}")
+        debugPrint(f"previous chapterNr is {previousChapter}")
     except:
         previousChapter = None
-        if DEBUGGING:
-            print("no previous chapter detected")
+        debugPrint("no previous chapter detected")
+    debugPrint("\n")
 
     if nextChapter not in [None, '']:
         chapter.nextChapter = float(nextChapter)
@@ -177,6 +180,7 @@ def makeChapter(page):
         chapter.previousChapter = float(previousChapter)
 
     return chapter
+
 
 def UI():
     print("Welcome to 'Unnamed Manwha Scraper v0.1' by Acheros.")
@@ -213,6 +217,7 @@ def UI():
             ch.buildHTML(path)
 
         print(f"All {len(chapters)} chapters were downloaded and built succesfully. Enjoy!\n")
+
 
 UI()
 
