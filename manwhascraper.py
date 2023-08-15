@@ -100,7 +100,7 @@ def debugPrint(msg):
 def getContentImages(soup: BeautifulSoup) -> [ContentImage]:
     readerarea = soup.find(id="readerarea")
     image_containers = readerarea.findAll("p")
-    images = [container.findAll("img")[0] for container in image_containers]
+    images = [inner for outer in [container.findAll("img") for container in image_containers if container.find("img") is not None] for inner in outer] # idk either bro
     return [ContentImage(img.attrs["src"], img.attrs["width"], img.attrs["height"]) for img in images]
 
 
@@ -224,4 +224,4 @@ def UI():
 
 UI()
 
-# https://asura.nacm.xyz/2226495089-the-tutorial-is-too-hard-chapter-120/
+# https://asura.nacm.xyz/2226495089-the-tutorial-is-too-hard-chapter-0/
