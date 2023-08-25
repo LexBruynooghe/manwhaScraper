@@ -115,7 +115,7 @@ def getTitle(pageTitle: str):
     return re.sub(" Chapter.*$", "", pageTitle, re.IGNORECASE)
 
 
-def getChapter(pageTitle: str):
+def getChapterFromTitle(pageTitle: str):
     for id in re.finditer(r'Chapter ([0-9.]+)', pageTitle, re.IGNORECASE):
         return float(id.group(1))
 
@@ -142,12 +142,16 @@ def getPrevURL(html):
 def normalizeURL(url):
     return re.sub(r"[\\]", "", url)
 
+def getChapterFromURL(url: str):
+    raw = re.finditer(r"chapter-([0-9.]+(-[0-9]+)?)[-/]*", url).__next__().group(1)
+    normalized = raw.strip("-").replace("-", ".")
+    return normalized
 
 def makeChapter(page):
     soup = BeautifulSoup(page.content, "html.parser")
     pageTitle = getPageTitle(soup)
     title = getTitle(pageTitle)
-    chapterNr = getChapter(pageTitle)
+    chapterNr = getChapterFromTitle(pageTitle)
 
     chapter = Chapter(title, chapterNr)
 
@@ -165,7 +169,7 @@ def makeChapter(page):
     previousChapter = None
 
     try:
-        nextChapter = re.finditer(r"chapter-([0-9.]+)[-/]*", next_url).__next__().group(1)
+        nextChapter = getChapterFromURL(next_url)
         debugPrint(f"next chapter found at {next_url}")
         debugPrint(f"next chapterNr is {nextChapter}")
     except:
@@ -173,7 +177,7 @@ def makeChapter(page):
 
     prev_url = getPrevURL(html)
     try:
-        previousChapter = re.finditer(r"chapter-([0-9.]+)[-/]*", prev_url).__next__().group(1)
+        previousChapter = getChapterFromURL(prev_url)
         debugPrint(f"previous chapter found at {prev_url}")
         debugPrint(f"previous chapterNr is {previousChapter}")
     except:
@@ -226,5 +230,3 @@ def UI():
 
 
 UI()
-
-# https://asura.nacm.xyz/2226495089-the-tutorial-is-too-hard-chapter-0/
