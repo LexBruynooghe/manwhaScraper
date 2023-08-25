@@ -34,6 +34,9 @@ class Chapter:
     def setNext(self, nextChapter):
         self.nextChapter = nextChapter
 
+    def __str__(self):
+        return ", ".join([self.title, self.chapter, self.content]) + " - " + f"prev: {self.previousChapter}" + f"next: {self.nextChapter}"
+
     def buildHTML(self, path: str):
         chapter_dir = os.path.join(path, "Chapter_" + str(self.chapter))
         chapter_html = os.path.join(chapter_dir, "read.html")
@@ -113,7 +116,7 @@ def getTitle(pageTitle: str):
 
 
 def getChapter(pageTitle: str):
-    for id in re.finditer(r'Chapter ([0-9.]+)', pageTitle):
+    for id in re.finditer(r'Chapter ([0-9.]+)', pageTitle, re.IGNORECASE):
         return float(id.group(1))
 
 
