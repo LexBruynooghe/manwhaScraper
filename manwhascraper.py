@@ -112,7 +112,7 @@ def getPageTitle(soup: BeautifulSoup):
 
 
 def getTitle(pageTitle: str):
-    return re.sub(" Chapter.*$", "", pageTitle)
+    return re.sub(" Chapter.*$", "", pageTitle, re.IGNORECASE)
 
 
 def getChapter(pageTitle: str):
