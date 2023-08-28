@@ -1,3 +1,5 @@
+import time
+import traceback
 import requests
 import os
 import re
@@ -191,25 +193,29 @@ def makeChapter(page):
 
     return chapter
 
-
+def requestUrlFromUser():
+    url = input("Enter the url of a chapter (currently only Asura scans) ==> ")
+    while not url.startswith("https://"):
+        url = input("The entered link is invalid, please try again ==> ")
+    return url
+def requestChapterAmountFromUser():
+    limit = input("Enter how many chapters you want to download, just press enter if there is no limit ==> ")
+    if not re.compile("^[0-9]+$").match(limit):
+        return 99999999
+    return int(limit)
 def UI():
-    print("Welcome to 'Unnamed Manwha Scraper v0.2' by Acheros.")
+    print("Welcome to 'Unnamed Manwha Scraper v0.3' by Acheros.")
     print("Feedback is appreciated and can be sent via discord '_acheros'.\n")
 
     while True:
-        url = input("Enter the url of a chapter (currently only Asura scans) ==> ")
-        limit = input("Enter how many chapters you want to download, just press enter if there is no limit ==> ")
-        if limit == "":
-            limit = 99999999
-        else:
-            limit = int(limit)
+        url = requestUrlFromUser()
+        limit = requestChapterAmountFromUser()
+
         print("Select the folder where you want to download the chapters.")
         path = askdirectory(title='Select Folder')
         print("Path selected: " + path)
-
         print("loading chapters...")
         chapters = []
-
         page = requests.get(url)
         nextChapter = getNextURL(page.content.decode('utf-8'))
         chapter = makeChapter(page)
@@ -228,5 +234,8 @@ def UI():
 
         print(f"All {len(chapters)} chapters were downloaded and built succesfully. Enjoy!\n")
 
-
-UI()
+try:
+    UI()
+except:
+    traceback.print_exc()
+    time.sleep(99999999)
