@@ -42,6 +42,7 @@ class Chapter:
     def buildHTML(self, path: str):
         chapter_dir = os.path.join(path, "Chapter_" + str(self.chapter))
         chapter_html = os.path.join(chapter_dir, "read.html")
+        content_dir = os.path.join(chapter_dir, "content")
         print(f"building chapter: {self.title + ' - ' + str(self.chapter)} at {os.path.abspath(chapter_html)}")
         try:
             os.mkdir(chapter_dir)
@@ -50,7 +51,7 @@ class Chapter:
             shutil.rmtree(chapter_dir)
             os.mkdir(chapter_dir)
 
-        f = open(chapter_html, 'w')
+        os.mkdir(content_dir)
 
         start = [
             '<!DOCTYPE html>',
@@ -77,10 +78,10 @@ class Chapter:
         for i in range(len(self.content)):
             print(f"downloading image {i + 1}/{len(self.content)}")
             name = f"ChapterContent{i}"
-            img_path = os.path.join(chapter_dir, f"{name}.jpg")
+            img_path = os.path.join(content_dir, f"{name}.jpg")
             downloadImage(self.content[i].url, img_path)
             start.append(
-                f'<p><img decoding="async" loading="lazy" src="{name}.jpg" width="{self.content[i].width}" height="{self.content[i].height}" class="readcontent"></p>')
+                f'<p><img decoding="async" loading="lazy" src="{os.path.basename(content_dir)}/{name}.jpg" width="{self.content[i].width}" height="{self.content[i].height}" class="readcontent"></p>')
 
         end = [
             '</div>',
@@ -92,6 +93,7 @@ class Chapter:
             '</html>'
         ]
 
+        f = open(chapter_html, 'w')
         lines = start + end
         f.writelines([line + "\n" for line in lines])
         f.close()
