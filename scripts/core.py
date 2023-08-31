@@ -35,10 +35,11 @@ class Chapter:
         return ", ".join([self.title, self.chapter,
                           self.content]) + " - " + f"prev: {self.previousChapter}" + f"next: {self.nextChapter}"
 
-    def buildHTML(self, path: str):
+    def buildHTML(self, path: str, headers=None):
         chapter_dir = os.path.join(path, "Chapter_" + str(self.chapter))
         chapter_html = os.path.join(chapter_dir, "read.html")
         content_dir = os.path.join(chapter_dir, "content")
+        styles_dir = os.path.join(chapter_dir, "styles")
         print(f"building chapter: {self.title + ' - ' + str(self.chapter)} at {os.path.abspath(chapter_html)}")
         try:
             os.mkdir(chapter_dir)
@@ -48,6 +49,10 @@ class Chapter:
             os.mkdir(chapter_dir)
 
         os.mkdir(content_dir)
+        os.mkdir(styles_dir)
+
+        chapter_css = os.path.join(styles_dir, "chapter.css")
+        shutil.copyfile("./styles/styles.css", chapter_css)
 
         start = [
             '<!DOCTYPE html>',
@@ -55,7 +60,7 @@ class Chapter:
             '<head>',
             '    <meta charset="UTF-8">',
             f'    <title>{self.title + " - " + str(self.chapter)}</title>',
-            '<style>.readerarea{text-align: center;}.main{background:#1e1f22;}.menu{background: #4d4a4a;padding: 5px 50px 5px 50px;text-align: right;}  .nav {border-radius: 10px; border: 0;background-color: #c7a669;padding: 5px 10px 5px 10px; margin-left: 10px; font-family: "Helvetica Neue", arial, sans-serif; font-size: 18px; color: #ffffff;}  .nav:hover {background-color: #b78730;cursor: pointer;}</style>',
+            '<link rel="stylesheet" href="styles/chapter.css">',
             '<script type="text/javascript">',
             "function loadNextChapter() {window.location.href = '../Chapter_" + str(
                 self.nextChapter) + "/read.html'}" if self.nextChapter is not None else "",
@@ -77,7 +82,7 @@ class Chapter:
         for i in range(len(self.content)):
             name = f"ChapterContent{i}"
             img_path = os.path.join(content_dir, f"{name}.jpg")
-            t = threading.Thread(target=threadDownload, args=(self.content[i].url, img_path,i,))
+            t = threading.Thread(target=threadDownload, args=(self.content[i].url, img_path, i, headers,))
             threads.append(t)
             width = self.content[i].width
             height = self.content[i].height
@@ -105,7 +110,8 @@ class Chapter:
         f.close()
         print("Chapter was built succesfully!\n")
 
-def threadDownload(url, path, i):
+def threadDownload(url, path, i, headers = None):
     debugPrint(f"thread ({i}) started for download of " + url)
-    downloadImage(url, path)
+    downloadImage(url, path, headers)
     debugPrint(f"thread ({i}) finished for download of " + url)
+

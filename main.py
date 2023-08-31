@@ -6,6 +6,8 @@ from tkinter.filedialog import askdirectory
 import requests
 
 import scripts.asurascraper as ASURA
+import scripts.chapmanganatoscraper as CHAPMANGANATO
+
 from scripts.util import *
 
 
@@ -36,11 +38,19 @@ def getSite(url):
 
 def getNextChapterURL(site, page):
     if site == "ASURASCANS":
-        return ASURA.getNextURL(page.content.decode('utf-8'))
+        return ASURA.getNextURL(page.content.decode("utf-8"))
+    elif site == "CHAPMANGANATO":
+        return CHAPMANGANATO.getNextURL(page)
 
 def getChapter(site, page):
     if site == "ASURASCANS":
         return ASURA.makeChapter(page)
+    elif site == "CHAPMANGANATO":
+        return CHAPMANGANATO.makeChapter(page)
+
+def getHeaders(site):
+    if site == "CHAPMANGANATO":
+        return {'Referer': 'https://chapmanganato.com/'}
 
 def UI():
     print("Welcome to 'Unnamed Manwha Scraper v0.8' by Acheros.")
@@ -72,7 +82,7 @@ def UI():
         print(f"Found {len(chapters)} chapters")
 
         for ch in chapters:
-            ch.buildHTML(path)
+            ch.buildHTML(path, getHeaders(site))
 
         print((f"All {len(chapters)} chapters were" if len(chapters) > 1 else "Chapter was") + " downloaded and built succesfully. Enjoy!\n")
 

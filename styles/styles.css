@@ -1,0 +1,36 @@
+
+.readerarea p {
+    margin: -2px;
+    padding: 0;
+}
+
+.readerarea {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main{
+    background:#1e1f22;
+}
+
+.menu{
+    background: #4d4a4a;
+    padding: 5px 50px 5px 50px;
+    text-align: right;
+}
+
+.nav {
+    border-radius: 10px;
+    border: 0;
+    background-color: #c7a669;
+    padding: 5px 10px 5px 10px;
+    margin-left: 10px;
+    font-family: "Helvetica Neue", arial, sans-serif;
+    font-size: 18px;
+    color: #ffffff;
+}
+.nav:hover {
+    background-color: #b78730;
+    cursor: pointer;
+}

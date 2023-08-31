@@ -7,15 +7,12 @@ from scripts.util import debugPrint, normalizeURL
 
 
 def getContentImages(soup: BeautifulSoup) -> [ContentImage]:
-    readerarea = soup.find(id="readerarea")
-    image_containers = readerarea.findAll("p")
-    images = [inner for outer in
-              [container.findAll("img") for container in image_containers if container.find("img") is not None] for
-              inner in outer]  # idk either bro
+    readerarea = soup.find(class_="container-chapter-reader")
+
+    images = [img for img in readerarea.findAll("img")]
 
     contentImage = [ContentImage(img.get("src"), img.get("width"), img.get("height")) for img in images]
     return contentImage
-
 
 def makeChapter(page):
     soup = BeautifulSoup(page.content, "html.parser")
@@ -31,7 +28,7 @@ def makeChapter(page):
         chapter.addContentImage(img)
 
     html = page.content.decode('utf-8')
-    next_url = getNextURL(html)
+    next_url = getNextURL(page)
     nextChapter = None
     previousChapter = None
 
@@ -42,7 +39,7 @@ def makeChapter(page):
     except:
         debugPrint("no next chapter detected")
 
-    prev_url = getPrevURL(html)
+    prev_url = getPrevURL(page)
     try:
         previousChapter = getChapterFromURL(prev_url)
         debugPrint(f"previous chapter found at {prev_url}")
@@ -58,28 +55,38 @@ def makeChapter(page):
 
     return chapter
 
-
 def getChapterFromTitle(pageTitle: str):
     return float(re.search(r'Chapter ([0-9.]+)', pageTitle, re.IGNORECASE).group(1))
-
 
 def getPageTitle(soup: BeautifulSoup):
     return soup.find("title").getText()
 
-
 def getTitle(pageTitle: str):
     return re.sub(" Chapter.*$", "", pageTitle, re.IGNORECASE)
 
+def getNextURL(page):
+    soup = BeautifulSoup(page.content, "html.parser")
+    element = soup.find("a", class_="navi-change-chapter-btn-next")
 
-def getNextURL(html):
-    return normalizeURL(re.search(r'"nextUrl":"([^"]*)"', html).group(1)) or None
+    if element is None:
+        return element
 
+    url = normalizeURL(element.get("href"))
+    return url
 
-def getPrevURL(html):
-    return normalizeURL(re.search(r'"prevUrl":"([^"]*)"', html).group(1)) or None
+def getPrevURL(page):
+    soup = BeautifulSoup(page.content, "html.parser")
+    element = soup.find("a", class_="navi-change-chapter-btn-prev")
 
+    if element is None:
+        return element
+
+    url = normalizeURL(element.get("href"))
+    return url
 
 def getChapterFromURL(url: str):
     raw = re.search(r"chapter-([0-9.]+(-[0-9]+)?)[-/]*", url).group(1)
     normalized = raw.strip("-").replace("-", ".")
     return normalized or None
+
+
