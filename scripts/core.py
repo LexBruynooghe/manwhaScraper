@@ -1,7 +1,9 @@
 import os
 import shutil
+import threading
 
-from scripts.util import downloadImage
+from scripts.util import downloadImage, debugPrint
+
 
 class ContentImage:
     def __init__(self, url: str, width: int = None, height: int = None):
@@ -69,14 +71,23 @@ class Chapter:
             '<div class="readerarea">'
         ]
 
+        threads = []
+
+        print(f"downloading content...")
         for i in range(len(self.content)):
-            print(f"downloading image {i + 1}/{len(self.content)}")
             name = f"ChapterContent{i}"
             img_path = os.path.join(content_dir, f"{name}.jpg")
-            downloadImage(self.content[i].url, img_path)
+            t = threading.Thread(target=threadDownload, args=(self.content[i].url, img_path,i,))
+            threads.append(t)
             width = self.content[i].width
             height = self.content[i].height
-            start.append(f'<p><img decoding="async" loading="lazy" src="{os.path.basename(content_dir)}/{name}.jpg"' + f' width="{width}"' if width is not None else '' + f' height="{height}"' if height is not None else '' + ' class="readcontent"></p>')
+            start.append(f'<p><img decoding="async" loading="lazy" src="{os.path.basename(content_dir)}/{name}.jpg"' + (f' width="{width}"' if width is not None else '') + (f' height="{height}"' if height is not None else '') + ' class="readcontent"></p>')
+
+        for thread in threads:
+            thread.start()
+
+        for thread in threads:
+            thread.join()
 
         end = [
             '</div>',
@@ -92,4 +103,9 @@ class Chapter:
         lines = start + end
         f.writelines([line + "\n" for line in lines])
         f.close()
-        print("Chapter was built succesfully!")
+        print("Chapter was built succesfully!\n")
+
+def threadDownload(url, path, i):
+    debugPrint(f"thread ({i}) started for download of " + url)
+    downloadImage(url, path)
+    debugPrint(f"thread ({i}) finished for download of " + url)

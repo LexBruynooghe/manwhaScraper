@@ -43,7 +43,7 @@ def getChapter(site, page):
         return ASURA.makeChapter(page)
 
 def UI():
-    print("Welcome to 'Unnamed Manwha Scraper v0.3' by Acheros.")
+    print("Welcome to 'Unnamed Manwha Scraper v0.8' by Acheros.")
     print("Feedback is appreciated and can be sent via discord '_acheros'.\n")
 
     while True:
@@ -53,7 +53,7 @@ def UI():
         limit = requestChapterAmountFromUser()
 
         print("Select the folder where you want to download the chapters.")
-        path = askdirectory(title='Select A Folder')
+        path = askdirectory(title='Select Folder')
         print("Path selected: " + path)
         print("loading chapters...")
         chapters = []
@@ -62,6 +62,7 @@ def UI():
         chapter = getChapter(site, page)
         chapters.append(chapter)
         i = 1
+
         while nextChapter is not None and i < limit:
             page = requests.get(nextChapter)
             nextChapter = getNextChapterURL(site, page)
@@ -73,7 +74,7 @@ def UI():
         for ch in chapters:
             ch.buildHTML(path)
 
-        print(f"All {len(chapters)} chapters were" if len(chapters) > 1 else "Chapter was" + " downloaded and built succesfully. Enjoy!\n")
+        print((f"All {len(chapters)} chapters were" if len(chapters) > 1 else "Chapter was") + " downloaded and built succesfully. Enjoy!\n")
 
 
 try:
