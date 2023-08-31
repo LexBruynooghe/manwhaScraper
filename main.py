@@ -1,13 +1,8 @@
-import re
-import time
 import traceback
 from tkinter.filedialog import askdirectory
 
-import requests
-
 import scripts.asurascraper as ASURA
 import scripts.chapmanganatoscraper as CHAPMANGANATO
-
 from scripts.util import *
 
 
@@ -53,7 +48,7 @@ def getHeaders(site):
         return {'Referer': 'https://chapmanganato.com/'}
 
 def UI():
-    print("Welcome to 'Unnamed Manwha Scraper v0.8' by Acheros.")
+    print("Welcome to 'Unnamed Manwha Scraper v1.1' by Acheros.")
     print("Feedback is appreciated and can be sent via discord '_acheros'.\n")
 
     while True:
