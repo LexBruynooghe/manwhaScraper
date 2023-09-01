@@ -8,8 +8,8 @@ This program has only been tested on windows so far, other operating systems may
 ## Installation guide
 1. Install [the latest version of Python](https://www.python.org/downloads/) on your device.
 2. Install the following packages using pip:
-  - beautifulsoup4
-  - requests
+   - beautifulsoup4
+   - requests
 3. Download this repository, unzip it and launch the main file.
 
 ## Credit
