@@ -23,7 +23,7 @@ def getSite(url):
     site = None
     if url.startswith("https://asura"):
         site = "ASURASCANS"
-    elif url.startswith("https://chapmanganato.com"):
+    elif url.startswith("https://chapmanganato"):
         site = "CHAPMANGANATO"
     else:
         debugPrint("site not supported")
