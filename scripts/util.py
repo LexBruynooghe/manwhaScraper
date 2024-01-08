@@ -36,4 +36,4 @@ def getUserSystem():
         return 'Unknown'
 
 def isDesktop(system: str):
-    return system in ['Linux Desktop', 'MacOS', 'Windows']
+    return system in ['MacOS', 'Windows']
