@@ -55,10 +55,13 @@ def getHeaders(site):
 
 
 def requestPathFromUser(desktop=True):
-    path = askdirectory(title='Select Folder') if desktop else input("==> ")
-    while path in [None, ""]:
-        input("Failed to select a directory, press enter to try again.")
-        path = askdirectory(title='Select Folder') if desktop else input("==> ")
+    if desktop:
+        path = askdirectory(title='Select Folder')
+        while path in [None, ""]:
+            input("Failed to select a directory, press enter to try again.")
+            path = askdirectory(title='Select Folder')
+    else:
+        path = input("==> ")
     return path
 
 
@@ -75,7 +78,7 @@ def UI():
         limit = requestChapterAmountFromUser()
 
         print("Select the folder where you want to download the chapters.")
-        path = requestPathFromUser(system)
+        path = requestPathFromUser(isDesktop(system))
         print("Path selected: " + path)
         print("loading chapters...")
         chapters = []
