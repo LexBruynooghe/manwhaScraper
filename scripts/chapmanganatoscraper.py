@@ -56,7 +56,10 @@ def makeChapter(page):
     return chapter
 
 def getChapterFromTitle(pageTitle: str):
-    return float(re.search(r'Chapter ([0-9.]+)', pageTitle, re.IGNORECASE).group(1))
+    try:
+        return float(re.search(r'Chapter ([0-9.]+)', pageTitle, re.IGNORECASE).group(1))
+    except AttributeError:
+        return -1.0
 
 def getPageTitle(soup: BeautifulSoup):
     return soup.find("title").getText()

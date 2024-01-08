@@ -1,15 +1,17 @@
 import traceback
 from tkinter.filedialog import askdirectory
-
 import scripts.asurascraper as ASURA
 import scripts.chapmanganatoscraper as CHAPMANGANATO
+from scripts import util
 from scripts.util import *
 
 
 def requestUrlFromUser():
     url = input("Enter the url of a chapter from a supported site ==> ")
     while getSite(url) == None:
-        url = input("The entered link is invalid, or is from a website that isn't supported (yet). Supported websites are: 'asuracomics.com, chapmanganato.com' Please try again ==> ")
+        url = input(
+            "The entered link is invalid, or is from a website that isn't supported (yet). Supported websites are: "
+            "'asuracomics.com, chapmanganato.com' Please try again ==> ")
     return url
 
 
@@ -18,6 +20,7 @@ def requestChapterAmountFromUser():
     if not re.compile("^[0-9]+$").match(limit):
         return 99999999
     return int(limit)
+
 
 def getSite(url):
     site = None
@@ -31,11 +34,13 @@ def getSite(url):
 
     return site
 
+
 def getNextChapterURL(site, page):
     if site == "ASURASCANS":
         return ASURA.getNextURL(page.content.decode("utf-8"))
     elif site == "CHAPMANGANATO":
         return CHAPMANGANATO.getNextURL(page)
+
 
 def getChapter(site, page):
     if site == "ASURASCANS":
@@ -43,12 +48,24 @@ def getChapter(site, page):
     elif site == "CHAPMANGANATO":
         return CHAPMANGANATO.makeChapter(page)
 
+
 def getHeaders(site):
     if site == "CHAPMANGANATO":
         return {'Referer': 'https://chapmanganato.com/'}
 
+
+def requestPathFromUser(desktop=True):
+    path = askdirectory(title='Select Folder') if desktop else input("==> ")
+    while path in [None, ""]:
+        input("Failed to select a directory, press enter to try again.")
+        path = askdirectory(title='Select Folder') if desktop else input("==> ")
+    return path
+
+
 def UI():
+    system = util.getUserSystem()
     print("Welcome to 'Unnamed Manwha Scraper v1.1' by Acheros.")
+    print("You are running this script on: " + system)
     print("Feedback is appreciated and can be sent via discord '_acheros'.\n")
 
     while True:
@@ -58,7 +75,7 @@ def UI():
         limit = requestChapterAmountFromUser()
 
         print("Select the folder where you want to download the chapters.")
-        path = askdirectory(title='Select Folder')
+        path = requestPathFromUser(system)
         print("Path selected: " + path)
         print("loading chapters...")
         chapters = []
@@ -79,7 +96,8 @@ def UI():
         for ch in chapters:
             ch.buildHTML(path, getHeaders(site))
 
-        print((f"All {len(chapters)} chapters were" if len(chapters) > 1 else "Chapter was") + " downloaded and built succesfully. Enjoy!\n")
+        print((f"All {len(chapters)} chapters were" if len(
+            chapters) > 1 else "Chapter was") + " downloaded and built succesfully. Enjoy!\n")
 
 
 try:
